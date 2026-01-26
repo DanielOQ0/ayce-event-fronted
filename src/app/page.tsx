@@ -74,7 +74,7 @@ export default function Home() {
       {/* Footer */}
       <footer className="p-6 text-center">
         <p className="text-sm text-gray-400">
-          © 2026 AYCE Event. Todos los derechos reservados.
+          © 2026 VISCOCITY S.A.S. Todos los derechos reservados.
         </p>
       </footer>
     </div>
