@@ -101,13 +101,14 @@ export function QRScanner({ onScan, onError, className }: QRScannerProps) {
     <div className={cn('w-full', className)}>
       {!showScanner ? (
         <div className="flex flex-col items-center gap-4">
-          <div className="w-full aspect-square max-w-xs bg-gray-100 rounded-2xl flex items-center justify-center border-2 border-dashed border-gray-300">
-            <Camera className="w-16 h-16 text-gray-400" />
-          </div>
-          <Button onClick={handleStartClick} className="w-full max-w-xs">
-            <Camera className="w-5 h-5 mr-2" />
-            Escanear QR
-          </Button>
+          <button
+            type="button"
+            onClick={handleStartClick}
+            className="w-full aspect-square max-w-xs bg-gray-100 rounded-2xl flex flex-col items-center justify-center border-2 border-dashed border-gray-300 hover:border-orange-400 hover:bg-orange-50 transition-colors cursor-pointer"
+          >
+            <Camera className="w-16 h-16 text-gray-400 mb-2" />
+            <span className="text-gray-600 font-medium">Toca para escanear</span>
+          </button>
           {error && (
             <p className="text-red-500 text-sm text-center">{error}</p>
           )}

@@ -17,6 +17,7 @@ const ERROR_TRANSLATIONS: Record<string, string> = {
   'to access': 'para acceder al',
   'to access fields': 'para acceder a los campos',
   'in collection': 'en la colección',
+  'has to be unique': 'ya está registrado',
 };
 
 const FIELD_TRANSLATIONS: Record<string, string> = {
@@ -36,6 +37,13 @@ const FIELD_TRANSLATIONS: Record<string, string> = {
 
 function translateError(message: string): string {
   let translated = message;
+  
+  // Detectar error de código QR duplicado y dar mensaje amigable
+  if (message.includes('has to be unique') && message.toLowerCase().includes('qr')) {
+    const match = message.match(/Value "([^"]+)"/);
+    const code = match ? match[1] : 'Este código QR';
+    return `El código ${code} ya está registrado. Este usuario ya existe en el sistema.`;
+  }
   
   // Traducir errores comunes
   for (const [en, es] of Object.entries(ERROR_TRANSLATIONS)) {
