@@ -27,11 +27,23 @@ export function formatTimeRemaining(endTime: string): {
   isExpired: boolean;
   formatted: string;
 } {
-  const now = new Date().getTime();
-  const end = new Date(endTime).getTime();
+  const now = Date.now();
+  
+  // Asegurar que la fecha se interprete correctamente
+  // Si no tiene Z al final y no tiene offset, asumir que es UTC
+  let endTimeStr = endTime;
+  if (!endTime.includes('Z') && !endTime.includes('+') && !endTime.includes('-', 10)) {
+    endTimeStr = endTime + 'Z';
+  }
+  
+  const end = new Date(endTimeStr).getTime();
   const diff = end - now;
 
-  if (diff <= 0) {
+  // Limitar a máximo 90 minutos (o la duración configurada)
+  const maxDiff = 90 * 60 * 1000; // 90 minutos en milisegundos
+  const clampedDiff = Math.min(diff, maxDiff);
+
+  if (clampedDiff <= 0) {
     return {
       hours: 0,
       minutes: 0,
@@ -41,9 +53,9 @@ export function formatTimeRemaining(endTime: string): {
     };
   }
 
-  const hours = Math.floor(diff / (1000 * 60 * 60));
-  const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-  const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+  const hours = Math.floor(clampedDiff / (1000 * 60 * 60));
+  const minutes = Math.floor((clampedDiff % (1000 * 60 * 60)) / (1000 * 60));
+  const seconds = Math.floor((clampedDiff % (1000 * 60)) / 1000);
 
   return {
     hours,

@@ -178,8 +178,12 @@ export const usersApi = {
   },
 
   startTimer: async (id: string, durationMinutes: number, token: string) => {
-    const startTime = new Date().toISOString();
-    const endTime = new Date(Date.now() + durationMinutes * 60 * 1000).toISOString();
+    // Redondear al segundo completo (sin milisegundos)
+    const now = new Date();
+    now.setMilliseconds(0);
+    
+    const startTime = now.toISOString();
+    const endTime = new Date(now.getTime() + durationMinutes * 60 * 1000).toISOString();
     
     return request(`/items/event_users/${id}`, {
       method: 'PATCH',
