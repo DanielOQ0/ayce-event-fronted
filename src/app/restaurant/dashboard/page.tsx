@@ -66,6 +66,13 @@ export default function RestaurantDashboardPage() {
     }
   }, [success]);
 
+  // Manejar cambio de pestaña
+  const handleTabChange = (tab: TabType) => {
+    setActiveTab(tab);
+    setError(null);
+    setSuccess(null);
+  };
+
   const handleLogout = () => {
     logout();
     router.push('/restaurant/login');
@@ -223,7 +230,7 @@ export default function RestaurantDashboardPage() {
         <NavTabs
           tabs={tabs}
           activeTab={activeTab}
-          onTabChange={(tab) => setActiveTab(tab as TabType)}
+          onTabChange={(tab) => handleTabChange(tab as TabType)}
         />
       }
     >
