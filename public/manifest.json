@@ -1,0 +1,21 @@
+{
+  "name": "AYCE Event",
+  "short_name": "AYCE",
+  "description": "Sistema de gestión para eventos All You Can Eat",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#f97316",
+  "icons": [
+    {
+      "src": "/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
