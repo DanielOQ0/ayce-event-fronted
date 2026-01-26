@@ -1,12 +1,13 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { useParams } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 import { Card, Spinner, Badge } from '@/components/atoms';
-import { CountdownTimer, UserInfoCard } from '@/components/molecules';
+import { CountdownTimer, UserInfoCard, QRScanner } from '@/components/molecules';
 import { MobileLayout } from '@/components/organisms';
 import { usersApi } from '@/lib/api';
-import { Calendar, UtensilsCrossed, AlertCircle } from 'lucide-react';
+import { extractQRCode } from '@/lib/utils';
+import { Calendar, UtensilsCrossed, QrCode } from 'lucide-react';
 
 interface UserData {
   id: string;
@@ -20,55 +21,71 @@ interface UserData {
 
 export default function ClientReservationPage() {
   const params = useParams();
+  const router = useRouter();
   const qrCode = params.code as string;
 
   const [user, setUser] = useState<UserData | null>(null);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const [notFound, setNotFound] = useState(false);
+  const [scanError, setScanError] = useState<string | null>(null);
+
+  const fetchUser = async (code: string) => {
+    try {
+      setLoading(true);
+      setNotFound(false);
+      setScanError(null);
+      
+      const users = await usersApi.getByQRCode(code);
+      
+      if (users.length === 0) {
+        setNotFound(true);
+        return;
+      }
+
+      const userData = users[0];
+      
+      // Manejar restaurant como string o como objeto
+      let restaurantName = 'Sin asignar';
+      if (userData.restaurant) {
+        if (typeof userData.restaurant === 'string') {
+          restaurantName = userData.restaurant;
+        } else if (typeof userData.restaurant === 'object') {
+          restaurantName = userData.restaurant.name || 'Sin asignar';
+        }
+      }
+      
+      setUser({
+        id: userData.id,
+        name: userData.name,
+        restaurant: { name: restaurantName },
+        status: userData.status,
+        start_time: userData.start_time,
+        end_time: userData.end_time,
+        qr_code: userData.qr_code,
+      });
+    } catch (err) {
+      setScanError(err instanceof Error ? err.message : 'Error al cargar la reserva');
+      setNotFound(true);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    const fetchUser = async () => {
-      try {
-        setLoading(true);
-        const users = await usersApi.getByQRCode(qrCode);
-        
-        if (users.length === 0) {
-          setError('Reserva no encontrada');
-          return;
-        }
-
-        const userData = users[0];
-        
-        // Manejar restaurant como string o como objeto
-        let restaurantName = 'Sin asignar';
-        if (userData.restaurant) {
-          if (typeof userData.restaurant === 'string') {
-            restaurantName = userData.restaurant;
-          } else if (typeof userData.restaurant === 'object') {
-            restaurantName = userData.restaurant.name || 'Sin asignar';
-          }
-        }
-        
-        setUser({
-          id: userData.id,
-          name: userData.name,
-          restaurant: { name: restaurantName },
-          status: userData.status,
-          start_time: userData.start_time,
-          end_time: userData.end_time,
-          qr_code: userData.qr_code,
-        });
-      } catch (err) {
-        setError(err instanceof Error ? err.message : 'Error al cargar la reserva');
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    if (qrCode) {
-      fetchUser();
+    // Solo buscar si el código no es "demo" o similar
+    if (qrCode && qrCode !== 'demo' && qrCode !== 'scan') {
+      fetchUser(qrCode);
+    } else {
+      setLoading(false);
+      setNotFound(true);
     }
   }, [qrCode]);
+
+  const handleQRScan = (scannedCode: string) => {
+    const code = extractQRCode(scannedCode);
+    // Navegar a la URL con el código real
+    router.push(`/reserva/${code}`);
+  };
 
   if (loading) {
     return (
@@ -81,15 +98,33 @@ export default function ClientReservationPage() {
     );
   }
 
-  if (error || !user) {
+  if (notFound || !user) {
     return (
-      <MobileLayout className="flex items-center justify-center p-6">
-        <Card variant="elevated" className="text-center max-w-sm">
-          <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
-            <AlertCircle className="w-8 h-8 text-red-500" />
+      <MobileLayout className="p-4">
+        {/* Header */}
+        <div className="text-center mb-6">
+          <div className="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-br from-orange-400 to-orange-600 rounded-2xl mb-3 shadow-lg">
+            <UtensilsCrossed className="w-10 h-10 text-white" />
           </div>
-          <h2 className="text-xl font-bold text-gray-900 mb-2">¡Oops!</h2>
-          <p className="text-gray-600">{error || 'Reserva no encontrada'}</p>
+          <h1 className="text-2xl font-bold text-gray-900">AYCE Event</h1>
+          <p className="text-gray-500">All You Can Eat Experience</p>
+        </div>
+
+        {/* Escanear QR */}
+        <Card variant="elevated" className="text-center">
+          <div className="w-16 h-16 bg-orange-100 rounded-full flex items-center justify-center mx-auto mb-4">
+            <QrCode className="w-8 h-8 text-orange-500" />
+          </div>
+          <h2 className="text-xl font-bold text-gray-900 mb-2">Escanea tu QR</h2>
+          <p className="text-gray-600 mb-6">
+            Escanea el código QR de tu reserva para ver tu información
+          </p>
+          
+          {scanError && (
+            <p className="text-red-500 text-sm mb-4">{scanError}</p>
+          )}
+          
+          <QRScanner onScan={handleQRScan} />
         </Card>
       </MobileLayout>
     );
