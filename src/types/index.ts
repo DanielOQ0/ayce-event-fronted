@@ -1,4 +1,4 @@
-// Tipos principales de la aplicación AYCE Event
+// Tipos principales de la aplicación NOMBRE DEL EVENTO
 
 export interface Restaurant {
   id: string;
@@ -57,6 +57,6 @@ export interface ApiError {
 // Configuración del evento
 export const EVENT_CONFIG = {
   DURATION_MINUTES: 90, // Duración del AYCE en minutos
-  EVENT_NAME: 'AYCE Event',
+  EVENT_NAME: 'NOMBRE DEL EVENTO',
   EVENT_DATE: '2026-02-15',
 };

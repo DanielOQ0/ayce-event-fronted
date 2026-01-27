@@ -14,7 +14,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "AYCE Event - All You Can Eat",
+  title: "NOMBRE DEL EVENTO - All You Can Eat",
   description: "Sistema de gestión para eventos All You Can Eat",
   manifest: "/manifest.json",
 };

@@ -13,10 +13,10 @@ export default function Home() {
           </div>
           
           <h1 className="text-4xl font-bold text-gray-900 mb-3">
-            AYCE Event
+            NOMBRE DEL EVENTO
           </h1>
           <p className="text-xl text-gray-600 max-w-md">
-            All You Can Eat Experience
+            Todo lo Que Puedas Comer
           </p>
         </div>
 
