@@ -1,4 +1,4 @@
-# Configuración de Directus para AYCE Event
+# Configuración de Directus para NOMBRE DEL EVENTO
 
 ## 1. Colecciones a Crear
 

@@ -1,0 +1,11 @@
+node_modules
+.next
+.vercel
+.git
+.vscode
+.env*
+!.env.production
+pnpm-debug.log
+.DS_Store
+dist
+/.idea
