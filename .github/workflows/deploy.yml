@@ -23,7 +23,7 @@ jobs:
             set -e
             cd ${{ secrets.APP_DIR }}
             git fetch --all
-            git reset --hard origin/${{ secrets.BRANCH || 'main' }}
+            git reset --hard origin/main
 
             # Create .env.production on the server from secrets.
             if [ -n "${{ secrets.ENV_PRODUCTION }}" ]; then
