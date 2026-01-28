@@ -20,7 +20,7 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           port: ${{ secrets.SSH_PORT }}
           script: |
-            set -e
+            set -ex
             cd ${{ secrets.APP_DIR }}
             git fetch --all
             git reset --hard origin/main
