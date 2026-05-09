@@ -36,5 +36,5 @@ jobs:
             EOF
             fi
 
-            docker compose pull || true
-            docker compose up -d --build --remove-orphans
+            docker compose -f docker/docker-compose.yml pull || true
+            docker compose -f docker/docker-compose.yml up -d --build --remove-orphans
